@@ -68,7 +68,7 @@ app.listen(PORT,()=>{
     console.log(`listening on ${PORT}`);
 })
 app.get("/",(req,res)=>{
-    res.render("./login.ejs");
+    res.render("./home.ejs");
 })
 app.get("/login",(req,res)=>{
     res.render("./login.ejs");
@@ -137,10 +137,12 @@ app.post('/community',async(req,res)=>{
 
     res.redirect("/home");
 });
+//showing all the communities
 app.get('/community',async (req,res)=>{
     const allCommunity= await Community.find({});
     res.render("index.ejs",{allCommunity});
 })
+//show route
 app.get('/community/:id',async(req,res)=>{
     let {id}=req.params;
     const community=await Community.findById(id).populate('resident').populate("owner");;
@@ -153,13 +155,12 @@ app.get('/community/:id',async(req,res)=>{
     }
     if(!req.user){
         res.render("/login.ejs");
+        
     }
-    let c=0,flag=false;
-    const residents=community.resident;
-    if(residents.includes(req.user)){
-        flag=true;
-    }
-    
+    const user=req.user;
+    const flag=  community.resident.some(resi => resi.username === user.username);
+    console.log(flag);
+
     
     res.render("./show.ejs",{community,flag});
 })
