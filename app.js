@@ -9,6 +9,7 @@ const passport=require('passport');
 const LocalStrategy=require('passport-local');
 //model requiremnts
 const User=require("./models/user.js");
+const Community=require("./models/community.js");
 const path=require('path');
 const methodOverride=require('method-override');
 //flash for messages
@@ -56,8 +57,8 @@ async function main() {
 }
 //for local variables
 app.use((req,res,next)=>{
-    // res.locals.success=req.flash('success');
-    // res.locals.error=req.flash('error');
+    res.locals.success=req.flash('success');
+    res.locals.error=req.flash('error');
     res.locals.currUser=req.user;
     next();
 });
@@ -116,6 +117,69 @@ app.get('/logout',(req,res)=>{
 //     req.flash('error',"Invalid username or password");
 //     res.render("./login-fail.ejs");
 // })
+//to get about section
+
 app.get("/home",(req,res)=>{
     res.render("./home.ejs");
+})
+//Add community
+app.get('/addCommunity',(req,res)=>{
+    res.render("./addCommunity.ejs");
+})
+app.post('/community',async(req,res)=>{
+    console.log(req.body);
+    const newCommunity=new Community(req.body);
+    newCommunity.owner=req.user._id;
+    newCommunity.resident.push(req.user);
+    console.log(newCommunity);
+    await newCommunity.save();
+    req.flash("success","New Community created!");
+
+    res.redirect("/home");
+});
+app.get('/community',async (req,res)=>{
+    const allCommunity= await Community.find({});
+    res.render("index.ejs",{allCommunity});
+})
+app.get('/community/:id',async(req,res)=>{
+    let {id}=req.params;
+    const community=await Community.findById(id).populate('resident').populate("owner");;
+    if(!req.user){
+        res.redirect('/login');
+    }
+    
+    if(!community){
+        req.flash("error","NO such community exits");
+    }
+    if(!req.user){
+        res.render("/login.ejs");
+    }
+    let c=0,flag=false;
+    const residents=community.resident;
+    if(residents.includes(req.user)){
+        flag=true;
+    }
+    
+    
+    res.render("./show.ejs",{community,flag});
+})
+//join the community
+app.post("/add/:id",async(req,res)=>{
+   
+    let {id}=req.params;
+    
+    const community=await Community.findById(id).populate('resident');
+    console.log(community.resident);
+    console.log(community);
+    community.resident.push(req.user);
+    await community.save();
+   
+    res.redirect(`/community/${id}`);
+    
+})
+
+app.use((err,req,res,next)=>{
+    let {status,message}=err;
+    res.status(status).render("./erros.ejs",{message});
+    // res.status(status).send(message);
 })

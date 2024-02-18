@@ -1,0 +1,48 @@
+<% layout("/layouts/boilerplate")-%>
+<body>
+    <div class="row col-80vh">
+        <div class="col-8 offset-3">
+            <h3 style="text-align: center;"><b><%=community.name%></b></h3><br>
+            <div class="card col-8  offset-0.9 show-card">
+        <img src="<%=community.image%>" class="card-img-top show-img col-8" alt="listing_img">
+        <div class="card-body">
+            <p class="card-text">
+                <p> Created by <b><%=community.owner.username%></p>
+                <p><%= community.description%><br></p>
+               
+                <p><%= community.location%></p>
+                <p><%= community.country%></p>
+                  
+                   
+                    
+                   
+                    
+                    
+                </ul>
+                
+            </p>
+            </div>
+        </div>
+        </div>
+       
+        
+            <form method="post" action="/add/<%=community._id%>"><button class="btn btn-success">Join the Community</button></form>
+            
+            
+      
+           
+    
+        
+      
+        
+        
+    
+    </div>
+    
+    
+
+    
+
+
+    
+</body>
