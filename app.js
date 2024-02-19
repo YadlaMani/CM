@@ -170,8 +170,7 @@ app.post("/add/:id",async(req,res)=>{
     let {id}=req.params;
     
     const community=await Community.findById(id).populate('resident');
-    console.log(community.resident);
-    console.log(community);
+    
     community.resident.push(req.user);
     await community.save();
    
@@ -192,7 +191,7 @@ app.use("/mycommunity",async (req,res)=>{
         }
         
     }
-   console.log(joinedCommunities);
+   
     
     res.render("./myCommunity.ejs",{joinedCommunities});
 })
