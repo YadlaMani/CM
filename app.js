@@ -145,7 +145,7 @@ app.get('/community',async (req,res)=>{
 //show route
 app.get('/community/:id',async(req,res)=>{
     let {id}=req.params;
-    const community=await Community.findById(id).populate('resident').populate("owner");;
+    const community=await Community.findById(id).populate('resident').populate("owner");
     if(!req.user){
         res.redirect('/login');
     }
@@ -178,7 +178,24 @@ app.post("/add/:id",async(req,res)=>{
     res.redirect(`/community/${id}`);
     
 })
-
+//my community
+app.use("/mycommunity",async (req,res)=>{
+    const allCommunity= await Community.find({}).populate('resident').populate("owner");
+    const user=req.user;
+    const joinedCommunities = [];
+    for (const community of allCommunity) {
+        
+        const flag=  community.resident.some(resi => resi.username === user.username);
+        if(flag){
+            joinedCommunities.push(community);
+            
+        }
+        
+    }
+   console.log(joinedCommunities);
+    
+    res.render("./myCommunity.ejs",{joinedCommunities});
+})
 app.use((err,req,res,next)=>{
     let {status,message}=err;
     res.status(status).render("./erros.ejs",{message});
