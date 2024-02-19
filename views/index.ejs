@@ -1,40 +1,32 @@
 <% layout("/layouts/boilerplate")-%>
-
-<body>
-  
-    <h3>All Communities</h3>
-    <!-- <form method="GET" action="/listings/new">
-        <button>Create new Listing</button>
-    </form> -->
-    <div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-1">
-        <%for(let community of allCommunity){%>
-          <a href="/community/<%=community._id%>" style="text-decoration:none">
-            <div class="card col listing-card" style="width: 20rem;">
-              <img src="<%=community.image%>" class="card-img-top" alt="community_image"  style="height: 20rem;">
-              <div class="card-img-overlay">
-              
-              </div>
-              <div class="card-body">
-                <p class="card-text">
-                  <b><%=community.name%></b>
-                  <p class="card-description"><%=community.description%></p>
-                  <p>No.of Residents:<b><%=community.resident.length%></b></p>
-                    <div class="Address">
-                        <p><%=community.country%></p>
-                        <p><%=community.location%></p>
+<body class="bg-light">
+    <style>
+        .card-img-top {
+            height: 200px; /* Set a fixed height for the images */
+            object-fit: contain; /* Ensure the entire image fits within the container */
+        }
+    </style>
+    <div class="container py-5">
+        <h1 class="text-center mb-5">Discover Communities</h1>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <% for(let community of allCommunity) { %>
+            <div class="col">
+                <div class="card border-0 shadow h-100">
+                    <img src="<%= community.image %>" class="card-img-top" alt="community_image">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><%= community.name %></h5>
+                        <p class="card-text text-muted"><%= community.description %></p>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><i class="bi bi-people-fill pe-2"></i>Residents: <%= community.resident.length %></li>
+                            <li><i class="bi bi-geo-alt-fill pe-2"></i><%= community.country %>, <%= community.location %></li>
+                        </ul>
                     </div>
-                </p>
-              </div>
-          </div>
-          </a>
-            
-            <%}%>
-        
+                    <div class="card-footer bg-transparent border-0 text-center">
+                        <a href="/community/<%= community._id %>" class="btn btn-primary btn-sm stretched-link">Explore</a>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
     </div>
-    
-
-    
-    
-    
-
 </body>
