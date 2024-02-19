@@ -257,3 +257,26 @@ img{
    width: 5
      0%;
 } */
+
+
+/*============index.ejs=========*/
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-title {
+    transition: color 0.3s;
+}
+
+.card:hover .card-title {
+    color: #0069d9;
+}
+
+.card-text {
+    transition: color 0.3s;
+}
+
+.card:hover .card-text {
+    color: #555;
+}
