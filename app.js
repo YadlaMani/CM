@@ -10,6 +10,7 @@ const LocalStrategy=require('passport-local');
 //model requiremnts
 const User=require("./models/user.js");
 const Community=require("./models/community.js");
+const AlertBox=require('./models/alertbox.js');
 const path=require('path');
 const methodOverride=require('method-override');
 //flash for messages
@@ -134,6 +135,9 @@ app.post('/community',async(req,res)=>{
     console.log(newCommunity);
     await newCommunity.save();
     req.flash("success","New Community created!");
+    const newAlertBox=new AlertBox();
+    newAlertBox.community=newCommunity;
+    await newAlertBox.save();
 
     res.redirect("/home");
 });
@@ -161,11 +165,18 @@ app.get('/community/:id',async(req,res)=>{
     const flag=  community.resident.some(resi => resi.username === user.username);
     console.log(flag);
 
-    
+    const alertbox=await AlertBox.find({community});
     const residents=community.resident;
-    
-    
-    res.render("./show.ejs",{community,flag,residents});
+    const myalertbox=alertbox[0];
+   const chat =myalertbox.populate({
+    path: 'messages',
+    populate: {
+      path: 'user',
+      model: 'User'
+    }
+  });
+   console.log(myalertbox);
+    res.render("./show.ejs",{community,flag,residents,myalertbox});
 })
 //join the community
 app.post("/add/:id",async(req,res)=>{
@@ -198,8 +209,21 @@ app.use("/mycommunity",async (req,res)=>{
     
     res.render("./myCommunity.ejs",{joinedCommunities});
 })
+//to added a message to the alert box
+app.post("/alertbox",async(req,res)=>{
+    const {id,msg}=req.body;
+    const userId=req.user._id;
+    const alertbox=await AlertBox.findById(id);
+    alertbox.messages.push({userId,msg:msg});
+    console.log(alertbox);
+    await alertbox.save();
+  
+    
+    res.redirect('/mycommunity');
+ })
 app.use((err,req,res,next)=>{
     let {status,message}=err;
     res.status(status).render("./erros.ejs",{message});
     // res.status(status).send(message);
 })
+
