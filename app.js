@@ -165,18 +165,19 @@ app.get('/community/:id',async(req,res)=>{
     const flag=  community.resident.some(resi => resi.username === user.username);
     console.log(flag);
 
-    const alertbox=await AlertBox.find({community});
+    const alertbox=await AlertBox.find({community}).populate('messages.user');;
     const residents=community.resident;
     const myalertbox=alertbox[0];
-   const chat =myalertbox.populate({
-    path: 'messages',
-    populate: {
-      path: 'user',
-      model: 'User'
-    }
-  });
-   console.log(myalertbox);
-    res.render("./show.ejs",{community,flag,residents,myalertbox});
+    console.log(myalertbox);
+    
+   
+    const messagesAndUsers = myalertbox.messages.map(message => ({
+        message: message.msg,
+        user: message.user
+    }));
+   console.log(messagesAndUsers);
+   
+    res.render("./show.ejs",{community,flag,residents,myalertbox,messagesAndUsers});
 })
 //join the community
 app.post("/add/:id",async(req,res)=>{
@@ -214,7 +215,7 @@ app.post("/alertbox",async(req,res)=>{
     const {id,msg}=req.body;
     const userId=req.user._id;
     const alertbox=await AlertBox.findById(id);
-    alertbox.messages.push({userId,msg:msg});
+    alertbox.messages.push({user:userId,msg:msg});
     console.log(alertbox);
     await alertbox.save();
   

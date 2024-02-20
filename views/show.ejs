@@ -30,12 +30,14 @@
 
             <%}%>
             <%if(flag){%>
+                <h1>Residents</h1>
                 <% for(let resident of residents) { %>
                     <p><%=resident.username%></p>
                 <%}%>
-                <% for(let message of myalertbox.messages) { %>
-
-                    <p><%=message.msg%></p>
+                <h1>Chat</h1>
+                <% for(let messageAndUser of messagesAndUsers ) { %>
+                    <p><%=messageAndUser.user.username%></p>
+                    <p><%=messageAndUser.message%></p>
                 <%}%>
 
                 <form method="POST" action="/alertbox">
