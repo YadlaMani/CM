@@ -162,7 +162,10 @@ app.get('/community/:id',async(req,res)=>{
     console.log(flag);
 
     
-    res.render("./show.ejs",{community,flag});
+    const residents=community.resident;
+    
+    
+    res.render("./show.ejs",{community,flag,residents});
 })
 //join the community
 app.post("/add/:id",async(req,res)=>{

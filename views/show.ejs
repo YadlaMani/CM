@@ -28,7 +28,11 @@
             <%if(!flag){%>
                 <form method="post" action="/add/<%=community._id%>"><button class="btn btn-success">Join the Community</button></form>
             <%}%>
-
+            <%if(flag){%>
+                <% for(let resident of residents) { %>
+                    <p><%=resident.username%></p>
+                <%}%>
+            <%}%>
             
             
             
