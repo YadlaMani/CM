@@ -27,8 +27,31 @@
        
             <%if(!flag){%>
                 <form method="post" action="/add/<%=community._id%>"><button class="btn btn-success">Join the Community</button></form>
-            <%}%>
 
+            <%}%>
+            <%if(flag){%>
+                <% for(let resident of residents) { %>
+                    <p><%=resident.username%></p>
+                <%}%>
+                <% for(let message of myalertbox.messages) { %>
+
+                    <p><%=message.msg%></p>
+                <%}%>
+
+                <form method="POST" action="/alertbox">
+                    <input type="hidden" name="id" value="<%=myalertbox._id%>">
+                  
+                    <div class="mb-3">
+                        <label for="msg" class="form-label">Alert Box</label>
+                        <textarea name="msg" placeholder="Post something" class="form-control" required></textarea>
+                        <div class="invalid-feedback">Enter message before posting</div>
+            
+                    </div>
+                    <button class="btn btn-success">Send</button>
+                </form>
+            <%}%>
+            
+            
             
             
             
