@@ -9,13 +9,14 @@
 }
 .loginheading{
     margin-left: 560px;
-}.card{
+}
+.card{
     overflow: hidden;
     position: relative;
     z-index: 3;
     width: 94%;
     margin: 0 120px;
-    padding: 111px 30px 54px;
+    padding: 170px 30px 54px;
     border-radius: 24px;
     font-family: "Open sans";
     text-align: center;
@@ -58,24 +59,13 @@
     padding: 0 27px;
     background:white;
 }
-#username:hover{
+#usernameinput:hover{
     border-radius: 0;
     box-shadow: 1px 2px 7px #226ce7;
 }
-#password:hover{
+#passwordinput:hover{
     border-radius: 0;
-    box-shadow: 1px 2px 7px #226ce7;
-}
-#email:hover{
-    border-radius: 0;
-    box-shadow: 1px 2px 7px #226ce7;
-}
-#phno:hover{
-    border-radius: 0;
-    box-shadow: 1px 2px 7px #226ce7;
-}
-.email{
-    margin-right: 11px;
+    box-shadow: 1px 2px 6px #226ce7;
 }
 .needs-validation >button{
     border: 0;
@@ -89,9 +79,10 @@
 .form-label{
     margin-right: 360px;
 }
-.btn:hover{
+.loginbutton:hover{
     z-index: 1;
     border-color: transparent;
-    background:green;
-    color:white;
+    box-shadow: 0 0 6px green;
 }
+
+
