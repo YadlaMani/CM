@@ -198,65 +198,7 @@ body {
     margin-right: 10px;
 }
 
-/* .login{
-    background-color: #3b444b;
-}
-.loginlabel{
-    margin-left:60%;
-    color:#ff5252;
-}
-.mb-3{
-    display: block;
-    align-items:  center;
-}
-.form{
-    display: inline-block;
-    margin-left:auto;
-    margin-right: auto;
-    text-align: left;
-    left: 76%;
-    right: 25%;
-    margin-left: -25%;
-    margin-right: -50%;
-    position: absolute;
-    margin-top:75px;
-}
-#username{
-    width:500px;
-}
-#password{
-    width:500px;
-}
-.needs-validation{
-    margin-left: 100px;
-}
-.loginbutton{
-    width: 100px;
-    background: #3b444b;
-    border-radius:25px;
-    color:  #ff5252;
-    cursor: pointer;
-}
-.loginbutton:hover{
-    background: rgb(38, 0, 255);
-    transition: 0.5s;
-}
-.form-label{
-    font-family: "Roboto" ;
-}
-img{
-    display: flex;
-    justify-content: space-around;
-    width: 56%;
-    height: 75%;
-    float: left;
-    margin-right: 6px;
-}
-.loginbutton{
-   width: 5
-     0%;
-} */
-
+/*============*/
 
 .card:hover {
     transform: translateY(-5px);
@@ -276,4 +218,97 @@ img{
 
 .card:hover .card-text {
     color: #555;
+}
+
+/*============show.ejs============*/
+
+/* Main Container */
+.row {
+    margin-top: 30px;
+}
+/* Community Name */
+.card-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333; 
+}
+.card-img-top {
+    background-image: url('your-image-url.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 300px; /* Set a fixed height for the image */
+    border-radius: 10px; /* Optional: Add rounded corners */
+}
+
+
+
+/* Residents Section */
+.resident-list {
+    margin-top: 30px; /* Add spacing from above elements */
+    padding: 20px;
+    background-color: #fff; /* White background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.resident-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px; /* Add border between residents */
+}
+
+/* Chat Section */
+.chat-box {
+    margin-top: 30px; /* Add spacing from above elements */
+    padding: 20px;
+    background-color: #fff; /* White background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+    height: 300px; /* Set a fixed height */
+    overflow-y: auto; /* Enable scrolling */
+}
+
+.message {
+    margin-bottom: 10px; /* Add spacing between messages */
+}
+
+.username {
+    font-weight: bold; /* Bold username */
+    color: #333; /* Dark text color */
+}
+
+.content {
+    margin-top: 5px; /* Add spacing between username and message content */
+    color: #555; /* Text color */
+}
+
+/* Text Box for Chat */
+.input-group {
+    margin-top: 20px; /* Add spacing from chat box */
+    margin-bottom: 10px;
+}
+
+textarea {
+    width: calc(100% - 100px); /* Adjust width */
+    height: 60px; /* Set a fixed height */
+    resize: none; /* Disable resizing */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Add padding */
+    border: 1px solid #ddd; /* Add border */
+}
+
+/* Send Button */
+.send-button {
+    width: 100px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff; /* White text color */
+    cursor: pointer;
+}
+
+.send-button:hover {
+    background-color: #0056b3; 
 }
