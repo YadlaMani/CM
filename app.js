@@ -86,8 +86,8 @@ app.get('/signup',(req,res)=>{
 })
 app.post('/signup',async(req,res)=>{
     
-        let {username,email,password,phno}=req.body;
-    const newUser=new User({email,username,phno});
+        let {username,email,password,phno,flatno}=req.body;
+    const newUser=new User({email,username,phno,flatno});
    const registeredUser=await  User.register(newUser,password);
    console.log(registeredUser);
    req.login(registeredUser,(err)=>{
@@ -220,9 +220,10 @@ app.post("/alertbox",async(req,res)=>{
     await alertbox.save();
   
     
-    res.redirect('/mycommunity');
+    res.redirect(`/mycommunity/${id}`);
  })
 app.use((err,req,res,next)=>{
+   
     let {status,message}=err;
     res.status(status).render("./erros.ejs",{message});
     // res.status(status).send(message);

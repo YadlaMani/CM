@@ -10,6 +10,10 @@ const userSchema=new Schema({
     phno:{
         type:String,
         required:true
+    },
+    flatno:{
+        type:String,
+        required:true
     }
     
 

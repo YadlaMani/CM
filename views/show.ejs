@@ -34,12 +34,16 @@
                         <% for(let resident of residents) { %>
                             <div class="resident-item mb-2 p-2">
                                 <p><%=resident.username%></p>
+                                <%if(resident.flatno){%>
+                                    <p>Flat No:<%=resident.flatno%></p>
+                                <%}%>
                             </div>
                         <%}%>
                     </div>
                 </div>
                 <!-- Chat Section -->
                 <div class="col-lg-6">
+
                     <h4 class="mb-3">Chat</h4>
                     <div class="chat-box">
                         <% for(let messageAndUser of messagesAndUsers ) { %>
@@ -49,16 +53,20 @@
                             </div>
                         <%}%>
                     </div>
-                    <!-- Text Box for Chat -->
-                    <form method="POST" action="/alertbox" class="mt-3">
-                        <div class="input-group">
-                            <textarea name="msg" placeholder="Type your message" class="form-control" required></textarea>
-                            <button class="btn btn-success" type="submit"><i class="fas fa-paper-plane"></i></button>
-                        </div>
-                    </form>
+                    <!-- Send message section -->
+                <form method="POST" action="/alertbox">
+                    <div class="input-group">
+                        <input type="hidden" name="id" value="<%=myalertbox._id%>">
+                        <textarea name="msg" placeholder="Type your message" class="form-control" required></textarea>
+                        <button class="btn btn-success" type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </form>
+                    
                 </div>
+                
+
             </div>
         <%}%>
     </div>
+
 </body>
-</html>
