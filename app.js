@@ -3,11 +3,12 @@ const app=express();
 const PORT=8080;
 //session requirements
 const session=require('express-session');
-
-//antentication requirements
+//middleware for login
+const {isLoggedIn}=require("./middleware.js");
+//authentication requirements
 const passport=require('passport');
 const LocalStrategy=require('passport-local');
-//model requiremnts
+//model requirements
 const User=require("./models/user.js");
 const Community=require("./models/community.js");
 const AlertBox=require('./models/alertbox.js');
@@ -193,7 +194,7 @@ app.post("/add/:id",async(req,res)=>{
     
 })
 //my community
-app.use("/mycommunity",async (req,res)=>{
+app.use("/mycommunity",isLoggedIn,async (req,res)=>{
     const allCommunity= await Community.find({}).populate('resident').populate("owner");
     const user=req.user;
     const joinedCommunities = [];
@@ -222,10 +223,12 @@ app.post("/alertbox",async(req,res)=>{
     
     res.redirect(`/mycommunity/${id}`);
  })
+ 
 app.use((err,req,res,next)=>{
    
     let {status,message}=err;
     res.status(status).render("./erros.ejs",{message});
+    next();
     // res.status(status).send(message);
 })
 
