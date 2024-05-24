@@ -1,72 +1,93 @@
 <% layout("/layouts/boilerplate")-%>
 <body>
-    <div class="container mt-5">
-        <div class="row">
-            <!-- Image Section -->
-            <div class="col-lg-8">
-                <img src="<%=community.image%>" class="img-fluid" alt="Community Image">
-            </div>
-            <!-- Information/Data Section -->
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4"><b><%=community.name%></b></h3>
-                        <p class="card-text">Created by <b><%=community.owner.username%></b></p>
-                        <p class="card-text"><%= community.description%></p>
-                        <p class="card-text"><%= community.location%></p>
-                        <p class="card-text"><%= community.country%></p>
-                    </div>
-                </div>
-                <!-- Join Community Button -->
-                <%if(!flag){%>
-                    <form method="post" action="/add/<%=community._id%>" class="mt-4">
-                        <button class="btn btn-success btn-block">Join the Community</button>
-                    </form>
-                <%}%>
-            </div>
+  <div class="container mt-5">
+    <div class="row">
+      <!-- Image Section -->
+      <div class="col-lg-8">
+        <img
+          src="<%=community.image%>"
+          class="img-fluid"
+          alt="Community Image"
+        />
+      </div>
+      <!-- Information/Data Section -->
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title text-center mb-4">
+              <b><%=community.name%></b>
+            </h3>
+            <p class="card-text">
+              Created by <b><%=community.owner.username%></b>
+            </p>
+            <p class="card-text"><%= community.description%></p>
+            <p class="card-text"><%= community.location%></p>
+            <p class="card-text"><%= community.country%></p>
+          </div>
         </div>
-        <!-- Residents Section -->
-        <%if(flag){%>
-            <div class="row mt-5">
-                <div class="col-lg-6">
-                    <h4 class="mb-3">Residents</h4>
-                    <div class="resident-list">
-                        <% for(let resident of residents) { %>
-                            <div class="resident-item mb-2 p-2">
-                                <p><%=resident.username%></p>
-                                <%if(resident.flatno){%>
-                                    <p>Flat No:<%=resident.flatno%></p>
-                                <%}%>
-                            </div>
-                        <%}%>
-                    </div>
-                </div>
-                <!-- Chat Section -->
-                <div class="col-lg-6">
-
-                    <h4 class="mb-3">Chat</h4>
-                    <div class="chat-box">
-                        <% for(let messageAndUser of messagesAndUsers ) { %>
-                            <div class="message">
-                                <p class="username"><%=messageAndUser.user.username%></p>
-                                <p class="content"><%=messageAndUser.message%></p>
-                            </div>
-                        <%}%>
-                    </div>
-                    <!-- Send message section -->
-                <form method="POST" action="/alertbox">
-                    <div class="input-group">
-                        <input type="hidden" name="id" value="<%=myalertbox._id%>">
-                        <textarea name="msg" placeholder="Type your message" class="form-control" required></textarea>
-                        <button class="btn btn-success" type="submit"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </form>
-                    
-                </div>
-                
-
-            </div>
+        <!-- Join Community Button -->
+        <%if(!flag){%>
+        <form method="post" action="/add/<%=community._id%>" class="mt-4">
+          <button class="btn btn-success btn-block">Join the Community</button>
+        </form>
         <%}%>
+      </div>
     </div>
+    <!-- Residents Section -->
+    <%if(flag){%>
+    <div class="row mt-5">
+      <div class="col-lg-6">
+        <h4 class="mb-3">Residents</h4>
+        <div class="resident-list">
+          <% for(let resident of residents) { %>
+          <div class="resident-item mb-2 p-2">
+            <p><%=resident.username%></p>
 
+            <%if(resident.flatno){%>
+            <p>Flat No:<%=resident.flatno%></p>
+
+            <%}%> <%if(user.email==community.owner.email){%>
+            <p>Phno:<%=resident.phno%></p>
+            <form
+              method="POST"
+              action="/community/<%=community._id%>/reviews/<%=resident._id%>?_method=DELETE"
+            >
+              <button class="btn btn-danger">Remove</button>
+            </form>
+
+            <%}%>
+          </div>
+          <%}%>
+        </div>
+      </div>
+      <!-- Chat Section -->
+      <div class="col-lg-6">
+        <h4 class="mb-3">Chat</h4>
+        <div class="chat-box">
+          <% for(let messageAndUser of messagesAndUsers ) { %>
+          <div class="message">
+            <p class="username"><%=messageAndUser.user.username%></p>
+            <p class="content"><%=messageAndUser.message%></p>
+          </div>
+          <%}%>
+        </div>
+        <!-- Send message section -->
+        <form method="POST" action="/<%=community._id%>/alertbox">
+          <div class="input-group">
+            <input type="hidden" name="id" value="<%=myalertbox._id%>" />
+            <textarea
+              name="msg"
+              placeholder="Type your message"
+              class="form-control"
+              required
+            ></textarea>
+            <button class="btn btn-success" type="submit">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <%}%>
+  </div>
 </body>
