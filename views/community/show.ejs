@@ -89,5 +89,12 @@
       </div>
     </div>
     <%}%>
+    <div>
+      <%if(user.email==community.owner.email){%>
+      <button>
+        <a href="/community/<%=community._id%>/edit">Edit community</a>
+      </button>
+      <%}%>
+    </div>
   </div>
 </body>

@@ -1,0 +1,9 @@
+<% layout("/layouts/boilerplate")-%>
+<body>
+  <p><%=user.username%></p>
+  <p><%=user.email%></p>
+  <p><%=user.phno%></p>
+  <p><%=user.flatno%></p>
+
+  <button><a href="/user/<%=user._id%>/edit">Edit info</a></button>
+</body>

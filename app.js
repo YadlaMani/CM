@@ -177,7 +177,7 @@ app.get("/community/:id", async (req, res) => {
     user: message.user,
   }));
 
-  res.render("./show.ejs", {
+  res.render("./community/show.ejs", {
     community,
     flag,
     residents,
@@ -215,6 +215,26 @@ app.use("/mycommunity", isLoggedIn, async (req, res) => {
 
   res.render("./myCommunity.ejs", { joinedCommunities });
 });
+//edit route for community
+app.get("/community/:id/edit", async (req, res) => {
+  let { id } = req.params;
+
+  const community = await Community.findById(id);
+  console.log(community);
+
+  res.render("./community/edit.ejs", { community });
+});
+//update route for community
+app.put("/community/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  const community = await Community.findByIdAndUpdate(id, {
+    ...req.body.community,
+  });
+  await community.save();
+  res.redirect(`/community/${community.id}`);
+});
+
 //to added a message to the alert box
 app.post("/:communityId/alertbox", async (req, res) => {
   const { communityId } = req.params;
@@ -246,6 +266,28 @@ app.delete("/community/:communityId/reviews/:residentId", async (req, res) => {
   );
 
   res.redirect(`/community/${communityId}`);
+});
+//To view the user profile
+app.get("/user", async (req, res) => {
+  const user = req.user;
+  res.render("./user/user.ejs", { user });
+});
+//edit route
+app.get("/user/:id/edit", async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  if (!user) {
+    req.redirec("/");
+  }
+  res.render("./user/edit.ejs", { user });
+});
+//update route
+app.put("/user/:id", async (req, res) => {
+  console.log(req.body);
+  const { id } = req.params;
+  const user = await User.findByIdAndUpdate(id, { ...req.body.user });
+  await user.save();
+  res.redirect("/user");
 });
 
 app.use((err, req, res, next) => {
