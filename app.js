@@ -84,6 +84,7 @@ app.post(
     failureFlash: true,
   }),
   (req, res) => {
+    req.flash("success", "Sucessfully loggedin");
     res.redirect("/home");
   }
 );
