@@ -15,6 +15,7 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const Community = require("./models/community.js");
 const AlertBox = require("./models/alertbox.js");
+const Review = require("./models/review.js");
 const path = require("path");
 const methodOverride = require("method-override");
 //flash for messages
@@ -72,6 +73,7 @@ app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
 app.get("/", (req, res) => {
+  req.flash("success", "Welcome to CM");
   res.render("./home.ejs");
 });
 app.get("/login", (req, res) => {
@@ -94,15 +96,21 @@ app.get("/signup", (req, res) => {
 app.post("/signup", async (req, res) => {
   let { username, email, password, phno, flatno } = req.body;
   const newUser = new User({ email, username, phno, flatno });
-  const registeredUser = await User.register(newUser, password);
-  console.log(registeredUser);
-  req.login(registeredUser, (err) => {
-    if (err) {
-      req.flash("error", "Invalid details");
-    }
+  try {
+    const registeredUser = await User.register(newUser, password);
+    console.log(registeredUser);
+    req.login(registeredUser, (err) => {
+      if (err) {
+        req.flash("error", "Invalid details");
+      }
+      req.flash("success", "Sign up Successfull");
 
-    res.redirect("/login");
-  });
+      res.redirect("/login");
+    });
+  } catch (err) {
+    req.flash("error", "User already exists");
+    res.render("./signup.ejs");
+  }
 });
 
 app.get("/logout", (req, res) => {
@@ -115,11 +123,11 @@ app.get("/logout", (req, res) => {
     res.redirect("/login");
   });
 });
-// app.get('/login-fail',(req,res)=>{
-//     req.flash('error',"Invalid username or password");
-//     res.render("./login-fail.ejs");
-// })
-//to get about section
+// app.get("/login/fail", (req, res) => {
+//   req.flash("error", "Invalid username or password");
+//   res.redirect("/login");
+// });
+// to get about section
 
 app.get("/home", (req, res) => {
   res.render("./home.ejs");
@@ -131,7 +139,7 @@ app.get("/addCommunity", (req, res) => {
 app.post("/community", async (req, res) => {
   console.log(req.body);
   const newCommunity = new Community(req.body);
-  newCommunity.owner = req.user._id;
+  newCommunity.owner = req.user;
   newCommunity.resident.push(req.user);
   console.log(newCommunity);
   await newCommunity.save();
@@ -164,6 +172,10 @@ app.get("/community/:id", async (req, res) => {
     res.render("/login.ejs");
   }
   const user = req.user;
+  if (!user || !user.username) {
+    req.flash("success", "Please login");
+    res.render("/login.ejs");
+  }
 
   const flag = community.resident.some(
     (resi) => resi.username === user.username
@@ -177,6 +189,9 @@ app.get("/community/:id", async (req, res) => {
     message: message.msg,
     user: message.user,
   }));
+  const newCommunity = await community.populate("reviews");
+
+  const reviews = newCommunity.reviews;
 
   res.render("./community/show.ejs", {
     community,
@@ -185,6 +200,7 @@ app.get("/community/:id", async (req, res) => {
     myalertbox,
     messagesAndUsers,
     user,
+    reviews,
   });
 });
 //join the community
@@ -195,7 +211,7 @@ app.post("/add/:id", async (req, res) => {
 
   community.resident.push(req.user);
   await community.save();
-
+  req.flash("success", "Joined community successfully");
   res.redirect(`/community/${id}`);
 });
 //my community
@@ -233,6 +249,7 @@ app.put("/community/:id", async (req, res) => {
     ...req.body.community,
   });
   await community.save();
+  req.flash("success", "Community updated successfully");
   res.redirect(`/community/${community.id}`);
 });
 
@@ -245,7 +262,7 @@ app.post("/:communityId/alertbox", async (req, res) => {
   alertbox.messages.push({ user: userId, msg: msg });
   console.log(alertbox);
   await alertbox.save();
-
+  req.flash("success", "Message sent");
   res.redirect(`/community/${communityId}`);
 });
 //delete resident route
@@ -265,6 +282,7 @@ app.delete("/community/:communityId/reviews/:residentId", async (req, res) => {
   console.log(
     await Community.findByIdAndUpdate(communityId, { resident: newresident })
   );
+  req.flash("success", "Resident deleted successfully");
 
   res.redirect(`/community/${communityId}`);
 });
@@ -288,12 +306,62 @@ app.put("/user/:id", async (req, res) => {
   const { id } = req.params;
   const user = await User.findByIdAndUpdate(id, { ...req.body.user });
   await user.save();
+  req.flash("success", "User updated successfully");
   res.redirect("/user");
 });
+//adding annoucement route
+app.post("/announcement/:id/add", async (req, res) => {
+  const { id } = req.params;
+  const community = await Community.findById(id);
+  community.announcement = req.body.announcement;
+  await community.save();
+  req.flash("success", "Announcement added successfully");
+  res.redirect(`/community/${id}`);
+});
+//Pay rent route
+app.post("/pay/:communityId/:residentId", async (req, res) => {
+  const { communityId, residentId } = req.params;
+  const resident = await User.findById(residentId);
+  resident.isPaid = true;
+  await resident.save();
+  req.flash("success", "Rent paid");
+  res.redirect(`/community/${communityId}`);
+});
+//To reset all the rents of the community page
+app.put("/community/:id/reset", async (req, res) => {
+  const { id } = req.params;
+  const community = await Community.findById(id);
+  community.resident.forEach((resi) => {
+    resi.isPaid = false;
+  });
 
+  // Save the new community
+  await community.save();
+
+  res.redirect(`/community/${id}`);
+});
+//to save the review of the user
+app.post("/community/:id/reviews", async (req, res) => {
+  let community = await Community.findById(req.params.id);
+  let newReview = new Review(req.body.review);
+  newReview.username = req.user.username;
+  community.reviews.push(newReview);
+  await newReview.save();
+  await community.save();
+  req.flash("success", "New review created!");
+  res.redirect(`/community/${community._id}`);
+});
+//to delete comment
+// app.delete("/community/:communityId/reviews/:reviewId", async (req, res) => {
+//   let { id, reviewid } = req.params;
+//   await Community.findByIdAndUpdate(id, { $pull: { reviews: reviewid } });
+//   await Review.findByIdAndDelete(reviewid);
+//   req.flash("success", "review deleted successfully");
+//   res.redirect(`/community/${id}`);
+// });
 app.use((err, req, res, next) => {
   let { status, message } = err;
-  res.status(status).render("./erros.ejs", { message });
+  res.status(status).render("./error.ejs", { message });
   next();
   // res.status(status).send(message);
 });

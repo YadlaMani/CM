@@ -1,6 +1,43 @@
 <% layout("/layouts/boilerplate")-%>
 <body>
   <div class="container mt-5">
+    <%if(flag){%>
+    <div class="alert alert-success" role="alert">
+      <p><%=community.announcement%></p>
+      <%if(user.username==community.owner.username){%>
+      <button onclick="openDialog()">Add announcement</button>
+
+      <%}%>
+    </div>
+    <%}%>
+    <div id="dialog" style="display: none">
+      <form
+        method="post"
+        action="/announcement/<%=community._id%>/add"
+        class="needs-validation"
+        novalidate
+      >
+        <textarea
+          name="announcement"
+          placeholder="Add new announcement..."
+          class="form-control"
+          required
+        ></textarea>
+        <div class="invalid-feedback">Announcement can't be empty</div>
+        <button type="submit">Add</button>
+      </form>
+    </div>
+    <!-- To reset the rent -->
+    <%if(flag){%> <%if(user.username==community.owner.username){%>
+    <div>
+      <form
+        method="post"
+        action="/community/<%=community._id%>/reset?_method=PUT"
+      >
+        <button>Reset</button>
+      </form>
+    </div>
+    <%}%> <%}%>
     <div class="row">
       <!-- Image Section -->
       <div class="col-lg-8">
@@ -23,6 +60,7 @@
             <p class="card-text"><%= community.description%></p>
             <p class="card-text"><%= community.location%></p>
             <p class="card-text"><%= community.country%></p>
+            <p><%=community.price%>/month</p>
           </div>
         </div>
         <!-- Join Community Button -->
@@ -40,13 +78,14 @@
         <h4 class="mb-3">Residents</h4>
         <div class="resident-list">
           <% for(let resident of residents) { %>
+          <%if(resident.username!=community.owner.username){%>
           <div class="resident-item mb-2 p-2">
             <p><%=resident.username%></p>
 
             <%if(resident.flatno){%>
             <p>Flat No:<%=resident.flatno%></p>
 
-            <%}%> <%if(user.email==community.owner.email){%>
+            <%}%> <%if(user.username==community.owner.username){%>
             <p>Phno:<%=resident.phno%></p>
             <form
               method="POST"
@@ -55,9 +94,11 @@
               <button class="btn btn-danger">Remove</button>
             </form>
 
+            <%}%> <%if(user.username==community.owner.username){%>
+            <p><%=resident.isPaid%></p>
             <%}%>
           </div>
-          <%}%>
+          <%}%> <%}%>
         </div>
       </div>
       <!-- Chat Section -->
@@ -88,13 +129,101 @@
         </form>
       </div>
     </div>
-    <%}%>
+    <%}%> <%if(flag){%>
     <div>
-      <%if(user.email==community.owner.email){%>
+      <%if(user.username==community.owner.username){%>
       <button>
         <a href="/community/<%=community._id%>/edit">Edit community</a>
       </button>
       <%}%>
     </div>
+    <%}%> <%if(!user.isPaid&&(user.username==community.owner.username)){%>
+    <form action="/pay/<%=community._id%>/<%=user._id%>" method="post">
+      <button>Pay rent</button>
+    </form>
+
+    <%}%>
   </div>
+  <hr />
+  <%if(flag){%>
+  <h4>Write a Review</h4>
+  <form
+    class="needs-validation mb-3"
+    novalidate
+    action="/community/<%=community._id%>/reviews"
+    method="POST"
+  >
+    <div class="mb-3 mt-3">
+      <fieldset class="starability-slot">
+        <input
+          type="radio"
+          id="no-rate"
+          class="input-no-rate"
+          name="review[rating]"
+          value="1"
+          checked
+          aria-label="No rating."
+        />
+        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+        <label for="first-rate1" title="Terrible">1 star</label>
+        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+        <label for="first-rate2" title="Not good">2 stars</label>
+        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+        <label for="first-rate3" title="Average">3 stars</label>
+        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+        <label for="first-rate4" title="Very good">4 stars</label>
+        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+        <label for="first-rate5" title="Amazing">5 stars</label>
+      </fieldset>
+    </div>
+    <div class="mb-3 mt-3">
+      <label for="comment" class="form-label">Comment</label>
+      <textarea
+        name="review[comment]"
+        id="comment"
+        cols="30"
+        rows="5"
+        class="form-control"
+        placeholder="Write about the place.."
+        required
+      ></textarea>
+      <div class="invalid-feedback">Comments can't be empty</div>
+    </div>
+    <button class="btn btn-outline-dark">Submit</button>
+  </form>
+
+  <%}%>
+  <hr />
+  <%if(reviews.length>0){%>
+  <div class="row">
+    <p><b>All Reviews</b></p>
+    <%for(review of reviews){%>
+    <div class="card col-5 ms-3 mb-3">
+      <div class="card-body">
+        <h5 class="card-title">@<%=review.username%></h5>
+        <p class="starability-result" data-rating="<%=review.rating%>">
+          Rated: 3 stars
+        </p>
+        <p class="card-text"><%=review.comment%></p>
+      </div>
+    </div>
+
+    <%}%>
+  </div>
+  <%}%>
+
+  <script>
+    function openDialog() {
+      document.getElementById("dialog").style.display = "block";
+    }
+
+    document
+      .getElementById("nameForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+        var name = document.getElementById("nameInput").value;
+        alert("Hello, " + name + "!");
+        document.getElementById("dialog").style.display = "none";
+      });
+  </script>
 </body>
