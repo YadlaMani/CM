@@ -57,6 +57,7 @@
             <p class="card-text">
               Created by <b><%=community.owner.username%></b>
             </p>
+            <p class="card-text"><%=community.owner.phno%></p>
             <p class="card-text"><%= community.description%></p>
             <p class="card-text"><%= community.location%></p>
             <p class="card-text"><%= community.country%></p>
@@ -66,7 +67,63 @@
         <!-- Join Community Button -->
         <%if(!flag){%>
         <form method="post" action="/add/<%=community._id%>" class="mt-4">
-          <button class="btn btn-success btn-block">Join the Community</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-toggle="modal"
+            data-target="#joinModal"
+          >
+            Join Community
+          </button>
+          <!-- Pop up for join community -->
+          <div
+            class="modal fade"
+            id="joinModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="joinModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="joinModalLabel">
+                    Join Community
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <!-- Form inside the modal -->
+                  <form
+                    id="joinForm"
+                    action="/add/<%=community._id%>"
+                    method="post"
+                  >
+                    <div class="form-group">
+                      <label for="code">Enter the 5-character code:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="code"
+                        name="code"
+                        maxlength="5"
+                        minlength="5"
+                        required
+                      />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Join</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </form>
         <%}%>
       </div>
@@ -224,6 +281,33 @@
         var name = document.getElementById("nameInput").value;
         alert("Hello, " + name + "!");
         document.getElementById("dialog").style.display = "none";
+      });
+  </script>
+  <!-- Include Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Your custom JavaScript -->
+  <script>
+    // Submit form via AJAX
+    document
+      .getElementById("joinForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+        const code = document.getElementById("code").value;
+        fetch("/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code: code }),
+        })
+          .then((response) => response.text())
+          .then((message) => {
+            alert(message);
+            $("#joinModal").modal("hide"); // Hide modal after submission
+          })
+          .catch((error) => console.error("Error:", error));
       });
   </script>
 </body>

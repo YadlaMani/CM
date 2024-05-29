@@ -51,6 +51,21 @@
         </div>
         <div class="row">
           <div class="mb-3 col-md-8">
+            <label for="code" class="form-label">Enter joining Code</label>
+            <input
+              name="code"
+              placeholder="Enter code"
+              type="text"
+              class="form-control"
+              maxlength="5"
+              minlength="5"
+              required
+            />
+            <div class="invalid-feedback">The code should be of length 5</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="mb-3 col-md-8">
             <label for="country" class="form-label">Country</label>
             <input
               name="country"

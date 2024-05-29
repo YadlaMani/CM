@@ -210,9 +210,15 @@ app.post("/add/:id", async (req, res) => {
   const community = await Community.findById(id).populate("resident");
 
   community.resident.push(req.user);
-  await community.save();
-  req.flash("success", "Joined community successfully");
-  res.redirect(`/community/${id}`);
+  const code = req.body.code;
+  if (code == community.code) {
+    await community.save();
+    req.flash("success", "Joined community successfully");
+    res.redirect(`/community/${id}`);
+  } else {
+    req.flash("error", "Invalid code");
+    res.redirect(`/community/${id}`);
+  }
 });
 //my community
 app.use("/mycommunity", isLoggedIn, async (req, res) => {

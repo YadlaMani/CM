@@ -32,6 +32,10 @@ const communitySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  code: {
+    type: String,
+    default: "00000",
+  },
   announcement: {
     type: String,
     default: "No announcements yet",
