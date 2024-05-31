@@ -285,6 +285,7 @@
           <h4 class="font-weight-bold mb-3">Residents</h4>
           <div class="resident-list">
             <% for(let resident of residents) { %>
+            <%if(resident.username!=community.owner.username){%>
             <div class="resident-item mb-2 p-2">
               <p class="font-weight-bold"><%=resident.username%></p>
 
@@ -298,9 +299,11 @@
               >
                 <button class="btn btn-danger">Remove</button>
               </form>
+              <%}%> <%if(user.username==community.owner.username){%>
+              <p><%=resident.isPaid%></p>
               <%}%>
             </div>
-            <%}%>
+            <%}%> <%}%>
           </div>
         </div>
         <!-- Chat Section -->
@@ -341,7 +344,8 @@
           >Edit Community</a
         >
       </div>
-      <%}%> <%if(!user.isPaid && user.username==community.owner.username){%>
+      <%}%> <%if(!user.isPaid &&
+      user.username!=community.owner.username&&flag){%>
       <form
         action="/pay/<%=community._id%>/<%=user._id%>"
         method="post"
