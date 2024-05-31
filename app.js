@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 8080;
+const PORT = 3000;
 //Environment variables
 require("dotenv").config();
 
@@ -133,7 +133,7 @@ app.get("/home", (req, res) => {
   res.render("./home.ejs");
 });
 //Add community
-app.get("/addCommunity", (req, res) => {
+app.get("/addCommunity", isLoggedIn, (req, res) => {
   res.render("./addCommunity.ejs");
 });
 app.post("/community", async (req, res) => {
@@ -156,7 +156,7 @@ app.get("/community", async (req, res) => {
   res.render("index.ejs", { allCommunity });
 });
 //show route
-app.get("/community/:id", async (req, res) => {
+app.get("/community/:id", isLoggedIn, async (req, res) => {
   let { id } = req.params;
   const community = await Community.findById(id)
     .populate("resident")
@@ -337,8 +337,10 @@ app.post("/pay/:communityId/:residentId", async (req, res) => {
 app.put("/community/:id/reset", async (req, res) => {
   const { id } = req.params;
   const community = await Community.findById(id);
-  community.resident.forEach((resi) => {
-    resi.isPaid = false;
+  community.resident.forEach(async (resi) => {
+    let user = await User.findById(resi._id);
+    user.isPaid = false;
+    await user.save();
   });
 
   // Save the new community
@@ -356,6 +358,31 @@ app.post("/community/:id/reviews", async (req, res) => {
   await community.save();
   req.flash("success", "New review created!");
   res.redirect(`/community/${community._id}`);
+});
+//leave the community
+app.use("/community/:communityId/remove/:userId", async (req, res) => {
+  const communityId = req.params.communityId;
+  const memberIdToRemove = req.body.userId; // Assuming you send memberId in the request body
+
+  try {
+    // Find the community by ID
+    const community = await Community.findById(communityId);
+
+    // Check if the member exists in the resident array
+    const index = community.resident.indexOf(memberIdToRemove);
+
+    // Remove the member from the resident array
+    community.resident.splice(index, 1);
+
+    // Save the updated community
+    await community.save();
+    req.flash("success", "Left the community successfully!");
+
+    res.redirect(`/community/${community._id}`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 //to delete comment
 // app.delete("/community/:communityId/reviews/:reviewId", async (req, res) => {

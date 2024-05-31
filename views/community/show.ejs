@@ -125,6 +125,14 @@
             </div>
           </div>
         </form>
+        <%}%> <%if(flag){%>
+        <form
+          method="post"
+          action="/community/<%=community._id%>/remove/<%=user._id%>"
+        >
+          <button>Leave community</button>
+        </form>
+
         <%}%>
       </div>
     </div>
@@ -194,7 +202,7 @@
       </button>
       <%}%>
     </div>
-    <%}%> <%if(!user.isPaid&&(user.username==community.owner.username)){%>
+    <%}%> <%if(!user.isPaid&&(user.username!=community.owner.username)&&flag){%>
     <form action="/pay/<%=community._id%>/<%=user._id%>" method="post">
       <button>Pay rent</button>
     </form>
