@@ -36,11 +36,14 @@
           id="passwordinput"
           placeholder="Enter password"
           type="password"
+          minlength="8"
           class="form-control"
           required
         />
 
-        <div class="invalid-feedback">password is not valid</div>
+        <div class="invalid-feedback">
+          password should be 8 or more characters
+        </div>
       </div>
       <p>Doesn't have a account <a href="/signup">Sign up</a></p>
       <button class="btn btn-success loginbutton">Login</button>

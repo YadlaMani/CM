@@ -8,6 +8,7 @@ require("dotenv").config();
 const session = require("express-session");
 //middleware for login
 const { isLoggedIn } = require("./middleware.js");
+
 //authentication requirements
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -151,7 +152,7 @@ app.post("/community", async (req, res) => {
   res.redirect("/home");
 });
 //showing all the communities
-app.get("/community", async (req, res) => {
+app.get("/community", isLoggedIn, async (req, res) => {
   const allCommunity = await Community.find({});
   res.render("index.ejs", { allCommunity });
 });
@@ -395,6 +396,8 @@ app.use("/community/:communityId/remove/:userId", async (req, res) => {
 app.use((err, req, res, next) => {
   let { status, message } = err;
   res.status(status).render("./error.ejs", { message });
+  global.currentRoute = req.path; // You can use req.originalUrl if you need the original URL including query parameters
+
   next();
   // res.status(status).send(message);
 });
